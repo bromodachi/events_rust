@@ -30,6 +30,7 @@ impl SnowflakeCreator {
         }
     }
     pub fn create_id(&self, timestamp: u64) -> u64 {
+        // TODO: Consider making this a result instead to do some error checking
         let first_second: u64 = self.start_millis;
         let timestamp = (timestamp - first_second) << 22;
         let worker_id = self.worker_id << 17;
@@ -38,7 +39,7 @@ impl SnowflakeCreator {
         *increment += 1;
         // to not overflow
         *increment = *increment % 4096;
-        let value =  timestamp + worker_id + process_id + *increment as u64;
+        let value =  timestamp | worker_id | process_id | *increment as u64;
         value
     }
 
